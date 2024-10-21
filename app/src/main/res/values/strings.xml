@@ -10,4 +10,10 @@
     <string name="txt_myvocab">My Vocab</string>
     <string name="txt_cencel">Cencel</string>
     <string name="txt_all_category">All Category</string>
+    <string name="txt_new_vocab">Add New Vocab</string>
+    <string name="txt_name">Name</string>
+    <string name="txt_meaning">Meaning</string>
+    <string name="txt_category">Category</string>
+    <string name="txt_save">Save</string>
+    <string name="txt_discard">Discard</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.vocabularyapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -21,7 +22,7 @@ class MainActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
         val savedUserName = sharedPreferences.getString("USER_NAME", null)
         if (savedUserName != null) {
-
+            navigateToDashboard(savedUserName)
         } else {
             showOnBoard()
         }
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         bindingMain.btnStart.setOnClickListener {
             val userName = bindingMain.etNameOnboarding.text.toString()
             saveName(userName)
+            navigateToDashboard(userName)
         }
     }
 
@@ -54,5 +56,10 @@ class MainActivity : AppCompatActivity() {
         val editor = sharedPref.edit()
         editor.putString("USER_NAME", userName)
         editor.apply()
+    }
+    private fun navigateToDashboard(userName: String){
+        val intent = Intent(this, DashboardActivity::class.java)
+        intent.putExtra("USER_NAME", userName)
+        startActivity(intent)
     }
 }
