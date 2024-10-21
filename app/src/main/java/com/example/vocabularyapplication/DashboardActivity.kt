@@ -2,8 +2,11 @@ package com.example.vocabularyapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,9 +21,12 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var bindingDashboard: ActivityDashboardBinding
     private lateinit var adapterCategory: CategoryAdapter
     private lateinit var adapterVocab: VocabAdapter
-    private var selectedListState: ListWordState = ListWordState.NORMAL
+    private var selectListState: ListWordState = ListWordState.NORMAL
     private var selectedCategory: WordCategory = WordCategory.ALL_CATEGORY
-    private lateinit var dbHandler: SqlDbHandler
+    private val dbHandler: SqlDbHandler = SqlDbHandler(this)
+    private var progress = 0
+    private var maxVocab = 100
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,57 +34,73 @@ class DashboardActivity : AppCompatActivity() {
         bindingDashboard = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(bindingDashboard.root)
 
-        dbHandler = SqlDbHandler(this)
-
         val sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
         val userName = sharedPreferences.getString("USER_NAME", null)
         if (userName != null) {
-            bindingDashboard.tvGreetings.text = getString(R.string.txt_greetings, userName)
+            bindingDashboard.tvGreeting.text = getString(R.string.txt_greeting, userName)
         }
+        buttonDeleteAdd()
         setCategoryList()
         setVocabList()
+        setProgressandRefreshed()
 
-        // Handle add button click
-        bindingDashboard.ivPlus.setOnClickListener {
-            navigateToAddVocab()
+        // add button
+        bindingDashboard.ivAdd.setOnClickListener {
+            selectListState = ListWordState.NORMAL
+            adapterVocab.setListState(selectListState)
+            navigateToNewVocab()
         }
+
+        bindingDashboard.ivDelete.setOnClickListener {
+            buttonCancel()
+            selectListState = ListWordState.REMOVED
+            adapterVocab.setListState(selectListState)
+        }
+
+        bindingDashboard.btnCancel.setOnClickListener {
+            buttonDeleteAdd()
+            selectListState = ListWordState.NORMAL
+            adapterVocab.setListState(selectListState)
+        }
+
+
     }
 
-    private fun setCategoryList() {
+    fun setCategoryList() {
         val categoryList = WordCategory.values().toList()
         adapterCategory = CategoryAdapter(categoryList, selectedCategory) { wordCategory ->
             selectedCategory = wordCategory
-            refreshListCategoryAndVocab(wordCategory)
+            refreshListCategoryandVocab(wordCategory)
         }
         bindingDashboard.rvCategory.apply {
-            layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            layoutManager =
+                LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = adapterCategory
         }
     }
 
-    private fun refreshListCategoryAndVocab(wordCategory: WordCategory) {
+    private fun refreshListCategoryandVocab(wordCategory: WordCategory) {
         val listWord = if (wordCategory == WordCategory.ALL_CATEGORY) {
             dbHandler.getVocab()
         } else {
-            dbHandler.getVocab().filter {
-                it.category == wordCategory
-            }
+            dbHandler.getVocab().filter { it.category == wordCategory }
         }
-        // Update vocab list and selected category in the adapter
+        // update list
         adapterVocab.refreshList(listWord)
         adapterCategory.updateSelectedCategory(selectedCategory)
     }
 
-    // Navigate to add new Vocab
-    private fun navigateToAddVocab() {
+    // navigate to add new vocab
+    private fun navigateToNewVocab() {
         val intent = Intent(this, AddActivity::class.java)
         startActivityForResult(intent, 123)
     }
 
-    // Set up vocabulary list adapter
+    // set value adapter vocab
     private fun setVocabList() {
-        adapterVocab = VocabAdapter(dbHandler.getVocab(), selectedListState) { positionToBeRemoved ->
-            removeAndRefresh(positionToBeRemoved)
+        adapterVocab = VocabAdapter(dbHandler.getVocab(), selectListState) { positionTobeRemoved ->
+            //removeandrefreshed
+            removedAndRefreshed(positionTobeRemoved)
         }
         bindingDashboard.rvVocab.apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
@@ -86,27 +108,49 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-    private fun removeAndRefresh(position: Int) {
+    // removed and refreshed
+    private fun removedAndRefreshed(position: Int) {
         dbHandler.deleteVocab(position)
         adapterVocab.refreshList(dbHandler.getVocab())
+        setProgressandRefreshed()
 
-        // Logic to toggle button visibility based on vocabulary list state
+        // logic untuk mengatur button yang ditampilkan
         if (dbHandler.getVocab().isNotEmpty()) {
-            showButtonsForCancel()
+            buttonCancel()
         } else {
-            showButtonsForEmptyList()
+            buttonDeleteAdd()
         }
     }
 
-    private fun showButtonsForCancel() {
-        bindingDashboard.btnCencel.isVisible = true
-        bindingDashboard.ivPlus.isVisible = true
-        bindingDashboard.ivDelete.isVisible = true
+    private fun buttonCancel() {
+        bindingDashboard.btnCancel.visibility = View.VISIBLE
+        bindingDashboard.ivDelete.visibility = View.GONE
+        bindingDashboard.ivAdd.visibility = View.GONE // Show add if progress is less than 100
+        selectListState = ListWordState.NORMAL
+        setProgressandRefreshed()
     }
 
-    private fun showButtonsForEmptyList() {
-        bindingDashboard.btnCencel.isVisible = true
-        bindingDashboard.ivPlus.isVisible = true
-        bindingDashboard.ivDelete.isVisible = dbHandler.getVocab().isNotEmpty()
+    private fun buttonDeleteAdd() {
+        bindingDashboard.btnCancel.visibility = View.GONE
+        bindingDashboard.ivAdd.visibility = View.VISIBLE
+        bindingDashboard.ivDelete.visibility = View.VISIBLE
+        setProgressandRefreshed()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 123) {
+            adapterVocab.refreshList(dbHandler.getVocab())
+            buttonDeleteAdd()
+        }
+    }
+
+    private fun setProgressandRefreshed() {
+        progress = (dbHandler.getVocab().size * 100) / maxVocab
+        bindingDashboard.tvTitleVocabAvailableValue.text =
+            getString(R.string.txt_available_value, progress)
+        bindingDashboard.tvAchieved.text = "$progress %"
+        bindingDashboard.pbAchieved.progress = progress
+        bindingDashboard.ivAdd.isVisible = progress < 100 && selectListState == ListWordState.NORMAL
     }
 }

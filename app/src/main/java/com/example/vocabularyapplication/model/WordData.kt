@@ -1,6 +1,6 @@
 package com.example.vocabularyapplication.model
 
-data class WordData (
+data class WordData(
     var id: Int,
     var name: String,
     var meaning: String,

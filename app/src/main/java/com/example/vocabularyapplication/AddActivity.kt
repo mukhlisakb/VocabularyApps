@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.vocabularyapplication.databinding.ActivityAddBinding
 import com.example.vocabularyapplication.db.SqlDbHandler
 import com.example.vocabularyapplication.model.WordCategory
@@ -22,32 +20,33 @@ class AddActivity : AppCompatActivity() {
         setContentView(bindingAddActivity.root)
         setSpinner()
 
-        bindingAddActivity.btnSaved.setOnClickListener{
-            if(bindingAddActivity.etName.text.isNullOrEmpty() || bindingAddActivity.etMeaning.text.isNullOrEmpty() ||
-                bindingAddActivity.spCategory.selectedItem.toString().isEmpty()
+        bindingAddActivity.btnSave.setOnClickListener {
+            if (bindingAddActivity.etName.text.isNullOrEmpty() ||
+                bindingAddActivity.etMeaning.text.isNullOrEmpty() ||
+                bindingAddActivity.spinnerCategory.selectedItem.toString().isEmpty()
             ) return@setOnClickListener
 
             sqlDbHandler.addVocab(
                 bindingAddActivity.etName.text.toString(),
                 bindingAddActivity.etMeaning.text.toString(),
-                bindingAddActivity.spCategory.selectedItem.toString()
+                bindingAddActivity.spinnerCategory.selectedItem.toString()
             )
             setResult(123, Intent())
             finish()
         }
+
         bindingAddActivity.btnDiscard.setOnClickListener{
             onBackPressed()
         }
-
     }
 
     private fun setSpinner() {
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this,
-            androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
-            getCategoryList())
-
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            this,
+            androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, getCategoryList()
+        )
         adapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item)
-        bindingAddActivity.spCategory.adapter = adapter
+        bindingAddActivity.spinnerCategory.adapter = adapter
     }
 
     private fun getCategoryList(): List<String> {

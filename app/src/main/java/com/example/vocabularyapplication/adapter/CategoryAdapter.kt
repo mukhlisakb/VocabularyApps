@@ -7,27 +7,38 @@ import com.example.vocabularyapplication.R
 import com.example.vocabularyapplication.databinding.ItemCategoryBinding
 import com.example.vocabularyapplication.model.WordCategory
 
-class CategoryAdapter(private val mList: List<WordCategory>,
+class CategoryAdapter(
+    private val mList: List<WordCategory>,
     selectedCategory: WordCategory,
-    private val onSelectedCategory: (WordCategory) -> Unit): RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> () {
-        private var currentCategory: WordCategory = selectedCategory
-        class CategoryViewHolder(private val itemCategoryBinding: ItemCategoryBinding): RecyclerView.ViewHolder(itemCategoryBinding.root) {
-            fun bind(item: WordCategory, selectedCategory: WordCategory, onSelectedCategory: (WordCategory) -> Unit) {
-                itemCategoryBinding.tvCategory.text = item.title
-                if(item.ordinal == selectedCategory.ordinal) {
-                    itemCategoryBinding.border.setCardBackgroundColor(itemCategoryBinding.root.context.getColor(
-                        R.color.color_bg_start_btn)
-                    )
-                } else {
-                    itemCategoryBinding.border.setCardBackgroundColor(itemCategoryBinding.root.context.getColor(
-                        R.color.color_card_bg)
-                    )
-                }
-                itemCategoryBinding.root.setOnClickListener{
-                    onSelectedCategory(item)
-                }
-            }
+    private var onSelectedCategory: (WordCategory) -> Unit
+) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+    private var currentCategory: WordCategory = selectedCategory
 
+    class CategoryViewHolder(private val itemCategoryBinding: ItemCategoryBinding) :
+        RecyclerView.ViewHolder(itemCategoryBinding.root) {
+        fun bind(
+            item: WordCategory,
+            selectedCategory: WordCategory,
+            onSelectCategory: (WordCategory) -> Unit
+        ) {
+            itemCategoryBinding.tvCategory.text = item.title
+            if (item.ordinal == selectedCategory.ordinal) {
+                itemCategoryBinding.border.setCardBackgroundColor(
+                    itemCategoryBinding.root.context.getColor(
+                        R.color.colorBackgrounStartButton
+                    )
+                )
+            } else {
+                itemCategoryBinding.border.setCardBackgroundColor(
+                    itemCategoryBinding.root.context.getColor(
+                        R.color.colorCardBackground
+                    )
+                )
+            }
+            itemCategoryBinding.root.setOnClickListener {
+                onSelectCategory(item)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
@@ -47,5 +58,4 @@ class CategoryAdapter(private val mList: List<WordCategory>,
         holder.bind(mList[position], currentCategory, onSelectedCategory)
     }
 }
-
 

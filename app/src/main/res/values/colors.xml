@@ -3,13 +3,13 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorBackgroundEditText">#F3F4F6</color>
-    <color name="color_bg_start_btn">#6D56F2</color>
-    <color name="cl_dashboard">#8D79FF</color>
-    <color name="color_track">#C2CAF2</color>
-    <color name="color_redbutton">#C10202</color>
-    <color name="color_card_bg">#EDEDED</color>
-    <color name="green_cal">#51DC2E</color>
-    <color name="orange_cal">#DC572E</color>
-    <color name="yellow_cal">#D6B709</color>
-    <color name="purple_cal">#9A96FF</color>
+    <color name="colorBackgrounStartButton">#6D56F2</color>
+    <color name="colorDashboard">#8D79FF</color>
+    <color name="colorTrack">#C2CAF2</color>
+    <color name="colorRedButton">#C10202</color>
+    <color name="colorCardBackground">#EDEDED</color>
+    <color name="green_51DC2E">#51DC2E</color>
+    <color name="red_DC572E">#DC572E</color>
+    <color name="yellow_D6B709">#D6B709</color>
+    <color name="purple_9A96FF">#9A96FF</color>
 </resources>

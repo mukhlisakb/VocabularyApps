@@ -9,14 +9,17 @@ import com.example.vocabularyapplication.model.ListWordState
 import com.example.vocabularyapplication.model.WordData
 
 class VocabAdapter(
-    private var currentList: List<WordData>,
-    private var currentListState: ListWordState,
+    mList: List<WordData>,
+    selectedListState: ListWordState,
     private val onRemovedItem: (Int) -> Unit
-) : RecyclerView.Adapter<VocabAdapter.VocabViewHolder>() {
+) :
+    RecyclerView.Adapter<VocabAdapter.VocabViewHolder>() {
+
+    private var currentList = mList
+    private var currentListState = selectedListState
 
     class VocabViewHolder(private val itemWordViewBinding: ItemVocabularyBinding) :
         RecyclerView.ViewHolder(itemWordViewBinding.root) {
-
         fun bind(item: WordData, currentListState: ListWordState, onRemovedItem: (Int) -> Unit) {
             itemWordViewBinding.tvNameVocab.text = item.name
             itemWordViewBinding.tvMeaning.text = item.meaning
@@ -25,13 +28,17 @@ class VocabAdapter(
                 requestLayout()
             }
             itemWordViewBinding.layoutCategory.setCardBackgroundColor(
-                itemWordViewBinding.root.context.getColor(item.category.color)
+                itemWordViewBinding.root.context.getColor(
+                    item.category.color
+                )
             )
             itemWordViewBinding.btnRemove.isVisible = currentListState == ListWordState.REMOVED
             itemWordViewBinding.btnRemove.setOnClickListener {
-                onRemovedItem(item.id) // Pastikan item.id adalah Int
+                onRemovedItem(item.id)
             }
         }
+
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VocabViewHolder {
@@ -50,8 +57,8 @@ class VocabAdapter(
         notifyDataSetChanged()
     }
 
-    internal fun refreshList(newList: List<WordData>) {
-        currentList = newList
+    internal fun refreshList(list: List<WordData>) {
+        currentList = list
         notifyDataSetChanged()
     }
 }

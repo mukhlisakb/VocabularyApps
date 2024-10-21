@@ -7,71 +7,71 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.example.vocabularyapplication.model.WordCategory
 import com.example.vocabularyapplication.model.WordData
 
-class SqlDbHandler(context: Context?): SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+class SqlDbHandler(context: Context?) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
     companion object {
         private const val DB_NAME = "vocabdb"
         private const val TABLE_NAME = "vocab"
         private const val DB_VERSION = 1
-        private const val COL_ID = "id"
-        private const val COL_NAME = "name"
-        private const val COL_MEANING = "meaning"
-        private const val COL_CATEGORY = "category"
+        private const val ID_COL = "id"
+        private const val NAME_COL = "name"
+        private const val MEANING_COL = "meaning"
+        private const val CATEGORY_COL = "category"
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
         val query = ("CREATE TABLE " + TABLE_NAME + " ("
-                + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT"
-                + COL_NAME + " TEXT, "
-                + COL_MEANING + " TEXT"
-                + COL_CATEGORY + " TEXT" + ")")
+                + ID_COL + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + NAME_COL + " TEXT,"
+                + MEANING_COL + " TEXT,"
+                + CATEGORY_COL + " TEXT" + ")")
         db?.execSQL(query)
     }
+
     // create
     fun addVocab(name: String?, meaning: String?, category: String?) {
         val db = this.writableDatabase
         val values = ContentValues()
-        values.put(COL_NAME, name)
-        values.put(COL_MEANING, meaning)
-        values.put(COL_CATEGORY, category)
+        values.put(NAME_COL, name)
+        values.put(MEANING_COL, meaning)
+        values.put(CATEGORY_COL, category)
         db.insert(TABLE_NAME, null, values)
         db.close()
     }
 
-    // Read
-
+    // read
     fun getVocab(): ArrayList<WordData> {
         val db = this.readableDatabase
-        val cursorVocab = db.rawQuery("SELECT * FROM $TABLE_NAME", null)
+        val cursorVocabs = db.rawQuery("SELECT * FROM $TABLE_NAME", null)
         val vocabList: ArrayList<WordData> = arrayListOf()
 
-        if (cursorVocab.moveToFirst()) {
+        if (cursorVocabs.moveToFirst()) {
             do {
                 WordCategory.values().map {
-                    if (it.title == cursorVocab.getString(3)) {
+                    if (it.title == cursorVocabs.getString(3)) {
                         vocabList.add(
                             WordData(
-                                cursorVocab.getInt(0),
-                                cursorVocab.getString(1),
-                                cursorVocab.getString(2),
+                                cursorVocabs.getInt(0),
+                                cursorVocabs.getString(1),
+                                cursorVocabs.getString(2),
                                 it
                             )
                         )
                     }
                 }
-            } while (cursorVocab.moveToNext())
+            } while (cursorVocabs.moveToNext())
         }
-        cursorVocab.close()
+        cursorVocabs.close()
         return vocabList
     }
 
-    // Removed
-    fun deleteVocab(id: Int) {
+    // delete
+    fun deleteVocab(id: Int){
         val db = this.writableDatabase
         db.delete(TABLE_NAME, "id=?", arrayOf(id.toString()))
         db.close()
     }
 
-    override fun onUpgrade(db: SQLiteDatabase?, p1: Int, p2: Int) {
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
         onCreate(db)
     }
