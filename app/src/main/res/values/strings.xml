@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Vocabulary Application</string>
+    <string name="txt_title_default">Lemme know your name!</string>
+    <string name="txt_hint_input_name">Hello, I\'m..</string>
+    <string name="txt_start_button">Let\'s Start!</string>
+    <string name="txt_title_replace">Tell me your name!</string>
+    <string name="txt_greetings">Hi, %1$s !</string>
+    <string name="txt_av_vocab">Available Vocabulary</string>
+    <string name="txt_avail_value">%1$d/100</string>
+    <string name="txt_myvocab">My Vocab</string>
+    <string name="txt_cencel">Cencel</string>
+    <string name="txt_all_category">All Category</string>
+</resources>

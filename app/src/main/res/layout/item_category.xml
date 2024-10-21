@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardCornerRadius="30dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/color_bg_start_btn"
+        app:layout_constraintStart_toStartOf="@id/tv_category"
+        app:layout_constraintEnd_toEndOf="@id/tv_category"
+        app:layout_constraintTop_toTopOf="@id/tv_category"
+        app:layout_constraintBottom_toBottomOf="@id/tv_category"
+        android:id="@+id/border"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:cardCornerRadius="30dp"
+        android:layout_margin="2dp"
+        app:layout_constraintStart_toStartOf="@id/border"
+        app:layout_constraintEnd_toEndOf="@id/border"
+        app:layout_constraintTop_toTopOf="@id/border"
+        app:layout_constraintBottom_toBottomOf="@id/border"
+        android:id="@+id/border_inner" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_all_category"
+        android:elevation="2dp"
+        android:padding="8dp"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginVertical="8dp"
+        android:textColor="@color/color_bg_start_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/tv_category"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
